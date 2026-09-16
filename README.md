@@ -1,6 +1,6 @@
 # Pico SI5351 + 47L16 Frequency Synthesizer
 
-RP Pico VFO / clock generator using a Silicon Labs **SI5351A**: tune from **2 kHz to 250 MHz** in **1 Hz** steps (firmware clamps are listed below). Dual I2C buses drive the SI5351, OLED displays, and a Microchip **47L16** EERAM so frequency and step settings survive power cycles.
+RP Pico VFO / clock generator using a Silicon Labs **SI5351A**: tune from **2 kHz to 250 MHz** in **1 Hz** steps (firmware clamps are listed below). Dual I2C buses drive the SI5351, OLED displays, and a Microchip **47L16** EERAM so frequency and step settings are **automatically saved at power-down** and restored on the next boot.
 
 **Status:** working bench firmware. Project page: [k9dtv.com/si5351a.html](https://k9dtv.com/si5351a.html)
 
@@ -44,7 +44,7 @@ Widen the clamps in `vfo.h` when you are ready to push the SI5351 harder; the Mu
 - **Rotate encoder** — change frequency by the current step.
 - **Short press encoder** — next step size.
 - **Long press encoder** (~350 ms) — toggle auto-step (step size grows when you roll past a decade digit).
-- **Confirm** — force-save settings to 47L16 SRAM (encoder changes also auto-save when dirty).
+- **Confirm** — force-save settings to 47L16 SRAM (encoder changes also auto-save when dirty; power-down AutoStore still persists them without this button).
 - **Back** — reload last saved settings from SRAM and re-apply the SI5351.
 
 ## How the SI5351 path works
@@ -58,6 +58,8 @@ Widen the clamps in `vfo.h` when you are ready to push the SI5351 harder; the Mu
 ## 47L16 settings
 
 Packed 32-byte record with signature, version, sequence, frequency, step index, auto-step flag, tail magic, and CRC32. Written to EERAM SRAM on change; validated on boot. Invalid / missing data falls back to 10 MHz, 1 Hz step, auto-step on.
+
+**Power-down:** settings are automatically saved when power is removed. The 47L16 keeps the live record in SRAM while you tune, then AutoStores SRAM into EEPROM on power-down so the last frequency, step, and auto-step flag come back on the next boot without pressing Confirm.
 
 ## Libraries
 
