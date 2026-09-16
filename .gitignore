@@ -1,0 +1,21 @@
+# Arduino / build
+build/
+*.elf
+*.bin
+*.hex
+*.uf2
+*.map
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Secrets / local
+.env
+.env.*
+secrets.env
+*.pem
