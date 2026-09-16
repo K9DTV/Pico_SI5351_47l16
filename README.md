@@ -15,7 +15,7 @@ RP Pico VFO / clock generator using a Silicon Labs **SI5351A**: tune from **2 kH
 | SH1106 128x64 OLED | Main frequency / step display (I2C0) |
 | SSD1306 64x32 OLED | Mini readout (I2C1) |
 | 47L16 EERAM | Non-volatile settings (I2C1) |
-| Rotary encoder + switch | Tune / step / auto-step |
+| Rotary encoder (EC11) + switch | Tune / step / auto-step (polled, no interrupts) |
 | Back + Confirm buttons | Recall / save settings |
 
 ### Pins (`vfo.h`)
@@ -48,6 +48,28 @@ Widen the clamps in `vfo.h` when you are ready to push the SI5351 harder; the Mu
 - **Long press encoder** (~350 ms) — toggle auto-step (step size grows when you roll past a decade digit).
 - **Confirm** — force-save settings to 47L16 SRAM (encoder changes also auto-save when dirty; power-down AutoStore still persists them without this button).
 - **Back** — reload last saved settings from SRAM and re-apply the SI5351.
+
+## EC11 encoder (no interrupts)
+
+The EC11 is handled entirely in the main loop (`encoder_getRotation` / `encoder_checkSwitch` in `encoder.cpp`). There are **no pin-change or external interrupts** — each pass through `loop()` samples GP13/GP14/GP15 with `digitalRead`.
+
+### Rotation (quadrature)
+
+1. Pack A and B into a 2-bit Gray code (`current = (A << 1) | B`) and compare to the previous sample.
+2. Unchanged sample → no motion.
+3. If both bits flip at once (`diff == 0b11`), treat it as bounce / glitch: update the stored state but **do not** count a step.
+4. Otherwise walk the Gray-code ring to decide +1 or −1 edge direction.
+5. **Detents:** an EC11 mechanical click produces four quadrature edges. Edges accumulate in `accum`; only when `|accum| >= ENCODER_DETENT` (4) does the firmware emit one tune step and clear the accumulator — so one detent = one frequency step.
+6. **Edge timing (bounce / chatter filter):**
+   - Edges closer than **1 ms** are ignored (too fast to be real shaft motion).
+   - A direction reverse within **6 ms** of the last accepted edge is ignored (contact bounce often looks like a quick reverse).
+
+### Push switch and button debounce
+
+- Encoder switch (GP15): edge accepted only if the raw level has disagreed with the latched state for more than **`DEBOUNCE_MS` (40 ms)**. On release, hold time ≥ **`longPressDelay` (350 ms)** → long press (auto-step toggle); shorter → short press (next step size).
+- Back / Confirm use the same **40 ms** latch debounce in `buttons.cpp` (`checkButton`).
+
+Pins are `INPUT_PULLUP`; contacts are active-low to ground.
 
 ## How the SI5351 path works
 
@@ -92,7 +114,7 @@ GitHub Actions compiles the sketch on every push (compile check only; see the **
 | `frequency.cpp` | Tuning, steps, auto-step |
 | `memory.cpp` | 47L16 load / save / CRC |
 | `display.cpp` | SH1106 + SSD1306 UI |
-| `encoder.cpp` | Quadrature + long-press |
+| `encoder.cpp` | EC11 quadrature poll + switch debounce / long-press |
 | `buttons.cpp` | Back / Confirm debounce |
 
 ## License
