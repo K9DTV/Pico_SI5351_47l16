@@ -73,6 +73,8 @@ Pins are `INPUT_PULLUP`; contacts are active-low to ground.
 
 ## How the SI5351 path works
 
+This project does **not** use any third-party SI5351A Arduino library. The popular ones proved unreliable on the bench and often fail with Chinese knock-off modules, so `si5351.cpp` programs the chip directly over I2C using Multisynth / PLL math from Silicon Labs AN619.
+
 1. **CLK0 only** — CLK1/CLK2 stay powered down; output enabled after init.
 2. **Low frequencies** — an R-divider (1…128) keeps the Multisynth target above ~500 kHz.
 3. **Mid band** — even Multisynth divider targeting ~750 MHz VCO; fractional PLLA feedback from the calibrated XTAL.
@@ -86,6 +88,8 @@ Packed 32-byte record with signature, version, sequence, frequency, step index, 
 **Power-down:** settings are automatically saved when power is removed. The 47L16 keeps the live record in SRAM while you tune, then AutoStores SRAM into EEPROM on power-down so the last frequency, step, and auto-step flag come back on the next boot without pressing Confirm.
 
 ## Libraries
+
+Display stack only (no SI5351 library):
 
 - [Adafruit SH110X](https://github.com/adafruit/Adafruit_SH110x)
 - [Adafruit SSD1306](https://github.com/adafruit/Adafruit_SSD1306)
