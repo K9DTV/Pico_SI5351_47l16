@@ -1,5 +1,7 @@
 # Pico SI5351 + 47L16 Frequency Synthesizer
 
+[![Compile](https://github.com/K9DTV/Pico_SI5351_47l16/actions/workflows/compile.yml/badge.svg)](https://github.com/K9DTV/Pico_SI5351_47l16/actions/workflows/compile.yml)
+
 RP Pico VFO / clock generator using a Silicon Labs **SI5351A**: tune from **2 kHz to 250 MHz** in **1 Hz** steps (firmware clamps are listed below). Dual I2C buses drive the SI5351, OLED displays, and a Microchip **47L16** EERAM so frequency and step settings are **automatically saved at power-down** and restored on the next boot.
 
 **Status:** working bench firmware. Project page: [k9dtv.com/si5351a.html](https://k9dtv.com/si5351a.html)
@@ -77,7 +79,7 @@ Board package: [earlephilhower/arduino-pico](https://github.com/earlephilhower/a
 4. Select **Raspberry Pi Pico**, compile, and upload.
 5. Set `OFFSET_AT_150MHZ` after measuring CLK0 at 150 MHz if you need tighter absolute accuracy.
 
-GitHub Actions compiles the sketch on push (compile check only).
+GitHub Actions compiles the sketch on every push (compile check only; see the **Compile** badge at the top).
 
 ## Layout
 
