@@ -123,4 +123,5 @@ GitHub Actions compiles the sketch on every push (compile check only; see the **
 
 ## License
 
-Project files are published for personal / educational use under K9DTV. See the site write-up for the story and wiring notes.
+MIT -- see [LICENSE](LICENSE). Project files are published for personal /
+educational use; see the site write-up for the story and wiring notes.
