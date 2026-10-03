@@ -1,6 +1,6 @@
 # Pico SI5351 + 47L16 Frequency Synthesizer
 
-[![Compile](https://github.com/K9DTV/Pico_SI5351_47l16/actions/workflows/compile.yml/badge.svg)](https://github.com/K9DTV/Pico_SI5351_47l16/actions/workflows/compile.yml)
+[![Compile](https://github.com/K9DTV/Pico_SI5351_47l16/actions/workflows/compile.yml/badge.svg)](https://github.com/K9DTV/Pico_SI5351_47l16/actions/workflows/compile.yml) ![License](https://img.shields.io/github/license/K9DTV/Pico_SI5351_47l16)
 
 RP Pico VFO / clock generator using a Silicon Labs **SI5351A**: tune from **2 kHz to 250 MHz** in **1 Hz** steps (firmware clamps are listed below). Dual I2C buses drive the SI5351, OLED displays, and a Microchip **47L16** EERAM so frequency and step settings are **automatically saved at power-down** and restored on the next boot.
 
